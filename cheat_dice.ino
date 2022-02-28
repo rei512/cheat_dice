@@ -1,12 +1,5 @@
 #include <Wire.h>
-#include <stdlib.h>
-#define MMA8452_ADRS 0x1D	//アドレス
-
-#define MMA8452_OUT_X_MSB 0x01	//データ呼び出しの先頭レジスタ
-#define MMA8452_XYZ_DATA_CFG 0x0E	//XYZ軸のデータの出力設定、加速度の範囲もここで選択
-#define MMA8452_CTRL_REG1 0x2A	//
-#define MMA8452_CTRL_REG1_ACTV_BIT 0x01
-#define MMA8452_G_SCALE 2	//加速度の範囲,2or4or8
+#include "MMA8452.h"
 
 const bool me[6][7] = {
   {LOW,        LOW,
@@ -38,10 +31,9 @@ const int C[6] = {0, 1, 2, 3, 4, 5};
 const int R[7] = {6, 7, 8, 9, 10, 11, 12};	//ピンの設定
 
 void setup() {
-	byte tmp;
-
 	//Serial.begin(38400);
 	Wire.begin();
+	MMA8452_setup();
 	//pinMode(A0, OUTPUT);
 	//pinMode(A1, OUTPUT);
 	//pinMode(A2, OUTPUT);
@@ -64,13 +56,7 @@ void setup() {
 	}
 	delay(3000);
 
-	tmp = MMA8452_ReadByte(MMA8452_CTRL_REG1);
-	MMA8452_WriteByte(MMA8452_CTRL_REG1, tmp & ~(MMA8452_CTRL_REG1_ACTV_BIT));
-
-	MMA8452_WriteByte(MMA8452_XYZ_DATA_CFG, (MMA8452_G_SCALE >> 2));
-
-	tmp = MMA8452_ReadByte(MMA8452_CTRL_REG1);
-	MMA8452_WriteByte(MMA8452_CTRL_REG1, tmp | MMA8452_CTRL_REG1_ACTV_BIT);
+	
 
 }
 
@@ -113,37 +99,7 @@ void loop() {
 	}
 }
 
-void MMA8452_ReadByteArray(byte adrs, int datlen, byte *dest){
-	Wire.beginTransmission(MMA8452_ADRS);
-	Wire.write(adrs);
-	Wire.endTransmission(false);
 
-	Wire.requestFrom(MMA8452_ADRS, datlen);
-
-	//while(Wire.available() < datlen);
-
-	for(int x = 0; x < datlen; x++){
-	dest[x] = Wire.read();
-	}
-}
-
-byte MMA8452_ReadByte(byte adrs){
-	Wire.beginTransmission(MMA8452_ADRS);
-	Wire.write(adrs);
-	Wire.endTransmission(false);
-
-	Wire.requestFrom(MMA8452_ADRS, 1);
-
-	//while(!Wire.available());
-	return(Wire.read());
-}
-
-void MMA8452_WriteByte(byte adrs, byte dat){
-	Wire.beginTransmission(MMA8452_ADRS);
-	Wire.write(adrs);
-	Wire.write(dat);
-	Wire.endTransmission();
-}
 
 int dice(int dip, int num, double *g) {
 	if(dip == 0 || dip == 7) {
