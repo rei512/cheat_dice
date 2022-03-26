@@ -8,6 +8,11 @@
 #define MMA8452_CTRL_REG1_ACTV_BIT 0x01
 #define MMA8452_G_SCALE 2	//加速度の範囲,2or4or8
 
+void MMA8452_setup();
+void MMA8452_ReadByteArray(byte adrs, int datlen, byte *dest);
+byte MMA8452_ReadByte(byte adrs);
+void MMA8452_WriteByte(byte adrs, byte dat);
+
 void MMA8452_setup() {
 	byte tmp;
 	Wire.begin();
@@ -23,7 +28,7 @@ void MMA8452_setup() {
 
 
 
-void MMA8452_ReadByteArray(byte adrs, int datlen, byte *dest){
+void MMA8452_ReadByteArray(byte adrs, int datlen, byte *dest) {
 	Wire.beginTransmission(MMA8452_ADRS);
 	Wire.write(adrs);
 	Wire.endTransmission(false);
@@ -37,7 +42,7 @@ void MMA8452_ReadByteArray(byte adrs, int datlen, byte *dest){
 	}
 }
 
-byte MMA8452_ReadByte(byte adrs){
+byte MMA8452_ReadByte(byte adrs) {
 	Wire.beginTransmission(MMA8452_ADRS);
 	Wire.write(adrs);
 	Wire.endTransmission(false);
@@ -48,7 +53,7 @@ byte MMA8452_ReadByte(byte adrs){
 	return(Wire.read());
 }
 
-void MMA8452_WriteByte(byte adrs, byte dat){
+void MMA8452_WriteByte(byte adrs, byte dat) {
 	Wire.beginTransmission(MMA8452_ADRS);
 	Wire.write(adrs);
 	Wire.write(dat);
